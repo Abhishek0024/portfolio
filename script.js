@@ -1,9 +1,7 @@
 (function(){
 'use strict';
 
-/* =====================================================
-   EDIT YOUR DETAILS HERE
-   ===================================================== */
+/* ---------- EDIT YOUR DETAILS HERE ---------- */
 var CONFIG = {
   name: 'Abhishek Rana',
   headline: 'I engineer reliable software that scales.',
@@ -24,12 +22,12 @@ var CONFIG = {
   education: [
     { degree:'Master of Computer Applications', school:'Ajay Kumar Garg Engineering College', period:'2024 – 2026',
       desc:'CGPA 8.04 / 10. Final-year project on a real-time chat app, plus active member of the coding club.',
-      tags:['Data Structures','Algorithms','DBMS','Operating Systems','Networks'] },
+      tags:['Data Structures','Algorithms','DBMS','Operating Systems','Networks','AI/ML'] },
     { degree:'Bachelor of Computer Applications', school:'HR Institute of Science and Technology', period:'2020 – 2023',
-      desc:'CGPA 8.04 / 10. Final-year project on a real-time chat app, plus active member of the coding club.',
+      desc:'Percentage: 72.4 / 100. Final-year project on a real-time chat app, plus active member of the coding club.',
       tags:['Data Structures','Algorithms','DBMS','Operating Systems','Networks'] }
   ],
-  /* handwritten notes – one per section (hero, work, internship, education, skills, contact). Edit freely. */
+  /* handwritten notes, one per section */
   notes: {
     hero:       { big:'Calm in a production fire.',        small:'Rolled back, fixed it, wrote the post-mortem.' },
     work:       { big:'Every one of these shipped.',       small:'Click a card for the code.' },
@@ -38,15 +36,14 @@ var CONFIG = {
     skills:     { big:'Always learning something new.',    small:'Current rabbit hole: Kubernetes operators.' },
     contact:    { big:'I reply within a day.',             small:'Coffee chat or code review, both welcome.' }
   },
-  mixedLetterFonts: true,   /* false = every letter in one typeface */
-  skills: ['TypeScript','Python','Java','React','Spring Boot','PostgreSQL','AWS','Docker','Kubernetes'],
+  mixedLetterFonts: true,   /* false = one typeface for every letter */
+  skills: ['Java','Python','Spring Boot','REST API','React','MySQL','AWS','Docker','Kubernetes'],
   links: [
     { label:'GitHub', url:'https://github.com/Abhishek0024' },
     { label:'LinkedIn', url:'https://linkedin.com/in/abhishek0024' },
     { label:'Résumé (PDF)', url:'#' }
   ]
 };
-/* ===================================================== */
 
 var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 var $ = function(s, r){ return (r||document).querySelector(s); };
@@ -55,7 +52,7 @@ var rand = function(a,b){ return a + Math.random()*(b-a); };
 var esc = function(s){ return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); };
 
 var FONT = '"Archivo", "Helvetica Neue", Helvetica, Arial, sans-serif';
-/* a small type specimen: each letter in the circles gets its own typeface */
+/* one typeface per hero letter */
 var LS = [
   {css:'800 {s}px "Archivo", "Helvetica Neue", Arial, sans-serif',            s:1.12},
   {css:'italic 400 {s}px "Instrument Serif", Georgia, serif',                  s:1.42},
@@ -71,7 +68,7 @@ function readTheme(){
 readTheme();
 try { window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', readTheme); } catch(e){}
 
-/* ---------- fill page from CONFIG ---------- */
+/* ---------- fill the page from CONFIG ---------- */
 document.title = CONFIG.name + ' – Software engineer';
 $('#h1').textContent = CONFIG.name;
 (function(){
@@ -89,36 +86,41 @@ $('#links').innerHTML = CONFIG.links.map(function(l){
   return '<li><a href="'+esc(l.url)+'">'+esc(l.label)+'</a></li>';
 }).join('');
 
+function dotGrid(){
+  var out = '';
+  for(var y=0;y<4;y++) for(var x=0;x<8;x++){
+    out += '<circle class="'+(((x*3+y)%5===0)?'a-i':'a-b')+'" cx="'+(30+x*34)+'" cy="'+(34+y*38)+'" r="'+(4+((x+y)%4)*3)+'"/>';
+  }
+  return out;
+}
 function art(i){
-  var dots = '';
   var s = [
     '<circle class="a-b" cx="212" cy="64" r="112"/><circle class="a-i" cx="64" cy="138" r="34"/>',
     '<circle class="a-b" cx="150" cy="210" r="160"/><circle class="a-t" cx="150" cy="210" r="112"/><circle class="a-i" cx="150" cy="210" r="62"/>',
-    (function(){for(var y=0;y<4;y++)for(var x=0;x<8;x++){dots+='<circle class="'+(((x*3+y)%5===0)?'a-i':'a-b')+'" cx="'+(30+x*34)+'" cy="'+(34+y*38)+'" r="'+(4+((x+y)%4)*3)+'"/>';}return dots;})(),
+    dotGrid(),
     '<path class="a-b" d="M0 184 A126 126 0 0 1 126 58 L126 184Z"/><circle class="a-i" cx="220" cy="92" r="52"/>'
   ];
   return '<svg viewBox="0 0 300 184" preserveAspectRatio="xMidYMid slice" aria-hidden="true">'+s[i%4]+'</svg>';
 }
 
-function entry(n, title, org){
+function tagList(tags){
+  return '<ul class="tags">'+tags.map(function(t){ return '<li>'+esc(t)+'</li>'; }).join('')+'</ul>';
+}
+$('#internList').innerHTML = CONFIG.internships.map(function(n){
   return '<article class="intern">' +
     '<div class="intern-meta"><strong>'+esc(n.period)+'</strong><span>'+esc(n.location)+'</span></div>' +
-    '<div><h3>'+esc(title)+'</h3><p class="intern-co">'+esc(org)+'</p>' +
-    '<p class="intern-desc">'+esc(n.desc)+'</p>' +
-    '<ul class="tags">'+n.tags.map(function(t){ return '<li>'+esc(t)+'</li>'; }).join('')+'</ul></div>' +
+    '<div><h3>'+esc(n.role)+'</h3><p class="intern-co">'+esc(n.company)+'</p>' +
+    '<p class="intern-desc">'+esc(n.desc)+'</p>' + tagList(n.tags) + '</div>' +
   '</article>';
-}
-$('#internList').innerHTML = CONFIG.internships.map(function(n){ return entry(n, n.role, n.company); }).join('');
+}).join('');
 $('#eduList').innerHTML = CONFIG.education.map(function(n){
   return '<article class="intern edu-item">' +
     '<div class="intern-meta"><strong>'+esc(n.period)+'</strong></div>' +
     '<div class="edu-rail"><span class="edu-mark"></span></div>' +
     '<div class="edu-card"><h3>'+esc(n.degree)+'</h3><p class="intern-co">'+esc(n.school)+'</p>' +
-    '<p class="intern-desc">'+esc(n.desc)+'</p>' +
-    '<ul class="tags">'+n.tags.map(function(t){ return '<li>'+esc(t)+'</li>'; }).join('')+'</ul></div>' +
+    '<p class="intern-desc">'+esc(n.desc)+'</p>' + tagList(n.tags) + '</div>' +
   '</article>';
 }).join('');
-
 
 var rail = $('#rail');
 CONFIG.projects.forEach(function(p,i){
@@ -134,7 +136,7 @@ CONFIG.projects.forEach(function(p,i){
   rail.appendChild(wrap);
 });
 
-/* ---------- helpers ---------- */
+/* ---------- canvas helpers ---------- */
 function fit(cv, box){
   var r = box.getBoundingClientRect();
   var dpr = Math.min(2, window.devicePixelRatio || 1);
@@ -147,9 +149,7 @@ function localPos(e, cv){
   return {x:e.clientX - r.left, y:e.clientY - r.top};
 }
 
-/* =====================================================
-   1. HERO – rigid bodies: gravity, collisions, friction
-   ===================================================== */
+/* ---------- Hero: letters as rigid bodies ---------- */
 function makeHero(){
   var box = $('#hero'), cv = $('#heroCanvas'), ctx = cv.getContext('2d');
   var glyphOff = {};
@@ -158,13 +158,13 @@ function makeHero(){
   var rowLens = CONFIG.name.split(/\s+/).filter(Boolean).map(function(w){ return Array.from(w).length; });
   var reelBtn = $('#reel') || document.createElement('button'), reel = false, stringA = 0;
   var W=0, H=0, dpr=1, bodies=[], mode='down', held=null, accum=0, accX=0, accY=0;
-  var ptr = {x:0,y:0,vx:0,vy:0,on:false,mouse:true};
+  var ptr = {x:0,y:0,on:false,mouse:true};
   var G=2200, E=0.5, STEP=1/120;
   var mod = {visible:true};
 
   function letterR(){ return clamp(Math.min(W/(letters.length+1)/2*1.25, H*0.12), 24, 60); }
 
-  /* where each letter belongs: the name laid out in a tidy row (or one row per word on narrow screens) */
+  /* home spots: the name in one row, or one row per word on narrow screens */
   function layout(){
     var r = letterR(), n = letters.length, pad = 12, out = [];
     var rows = (n*2*r <= W - pad*2) ? [n] : rowLens;
@@ -180,7 +180,7 @@ function makeHero(){
     reelBtn.setAttribute('aria-label', reel ? 'Set the letters free' : 'Reel the letters back into my name');
   }
 
-  /* drop=false: the name sits arranged on the ground (and the strings are taut). drop=true: letters rain in from above. */
+  /* drop=false: name arranged on the ground. drop=true: letters rain in from above. */
   function spawnLetters(drop){
     bodies = bodies.filter(function(b){return b.extra;});
     var r = letterR(), n = letters.length, out = [], hs = layout();
@@ -230,8 +230,8 @@ function makeHero(){
         ax = dx/d*G*1.2*k; ay = dy/d*G*1.2*k; drag = 1.2;
       }
       if(reel){
-        if(b.extra){ b.r *= Math.max(0, 1 - 7*dt); }          /* stray balls pop away */
-        else if(homes[b.i]){                                    /* letters are reeled in along their strings */
+        if(b.extra){ b.r *= Math.max(0, 1 - 7*dt); }   /* stray balls pop away */
+        else if(homes[b.i]){                             /* letters reel in toward home */
           drag = 0.05;
           ax = 70*(homes[b.i].x - b.x) - 15*b.vx;
           ay = 70*(homes[b.i].y - b.y) - 15*b.vy;
@@ -244,7 +244,7 @@ function makeHero(){
       if(sp > 2600){ b.vx *= 2600/sp; b.vy *= 2600/sp; }
       var dm = Math.max(0, 1 - drag*dt); b.vx *= dm; b.vy *= dm;
       b.x += b.vx*dt; b.y += b.vy*dt;
-      /* spin: damped, with a restoring torque that rights the letters */
+      /* spin: damped, with a torque that keeps letters upright */
       b.a += b.av*dt;
       b.av *= (1 - Math.min(1, 3*dt));
       if(!b.extra) b.av += -16*Math.sin(b.a)*dt;
@@ -271,7 +271,7 @@ function makeHero(){
       bodies = bodies.filter(function(b){ return !(b.extra && b.r < 1.5); });
       if(held && held.extra && held.r < 1.5) held = null;
     }
-    /* circle–circle collisions with impulse response */
+    /* circle collisions */
     for(var it=0; it<3; it++){
       for(i=0;i<bodies.length;i++){
         for(j=i+1;j<bodies.length;j++){
@@ -302,7 +302,6 @@ function makeHero(){
   mod.update = function(dt){
     stringA += ((reel ? 1 : 0) - stringA)*Math.min(1, 9*dt);   /* strings fade in while reeling */
     var vx = accX/dt, vy = accY/dt; accX = accY = 0;
-    ptr.vx = vx; ptr.vy = vy;
     if(ptr.on && ptr.mouse && !held && (vx||vy)){
       bodies.forEach(function(b){
         var d = Math.hypot(b.x-ptr.x, b.y-ptr.y);
@@ -320,15 +319,14 @@ function makeHero(){
   mod.draw = function(){
     ctx.setTransform(dpr,0,0,dpr,0,0);
     ctx.clearRect(0,0,W,H);
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    /* strings: each letter is tied to the ground, right below its place in the name */
+    /* strings from the ground below each letter's home to the letter */
     var homes = layout(), sagDir = reel ? 0 : (mode==='down' ? 1 : mode==='up' ? -1 : 0);
     ctx.lineWidth = 1.25; ctx.lineCap = 'round'; ctx.strokeStyle = theme.ink; ctx.globalAlpha = 0.22*stringA;
     bodies.forEach(function(b){
       if(b.extra || stringA < 0.01) return;
       var h = homes[b.i]; if(!h) return;
       var d = Math.hypot(b.x - h.x, b.y - H);
-      if(d < 2 || Math.hypot(b.x - h.x, b.y - h.y) < 6) return;   /* resting at home: string stays hidden */
+      if(d < 2 || Math.hypot(b.x - h.x, b.y - h.y) < 6) return;   /* at home: no string */
       var sag = Math.min(26, d*0.07)*sagDir;
       ctx.beginPath(); ctx.moveTo(h.x, H);
       ctx.quadraticCurveTo((h.x + b.x)/2, (H + b.y)/2 + sag, b.x, b.y);
@@ -392,7 +390,7 @@ function makeHero(){
   cv.addEventListener('pointerup', release);
   cv.addEventListener('pointercancel', release);
   cv.addEventListener('pointerleave', function(){ if(!held) ptr.on = false; });
-  /* on touch screens, only block page scrolling when a finger lands on a body */
+  /* touch: only block page scroll when a finger lands on a body */
   cv.addEventListener('touchstart', function(e){
     var t = e.touches[0], p = localPos(t, cv);
     if(hit(p.x,p.y)) e.preventDefault();
@@ -435,9 +433,7 @@ function makeHero(){
   return mod;
 }
 
-/* =====================================================
-   2. WORK – pendulums hanging from a beam
-   ===================================================== */
+/* ---------- Work: pendulum cards ---------- */
 function makePendulums(){
   var K = 9, C = 0.5, MAXTH = 1.35;
   var list = Array.prototype.map.call(document.querySelectorAll('.hang'), function(el, i){
@@ -474,7 +470,7 @@ function makePendulums(){
   var mod = {visible:true, box:$('#rail')};
   var prevTh = list.map(function(){return 0;});
 
-  /* a gentle sway when the cards first come into view */
+  /* sway the cards once when they first scroll into view */
   if(!reduce){
     var io = new IntersectionObserver(function(entries){
       entries.forEach(function(en){
@@ -515,9 +511,7 @@ function makePendulums(){
   return mod;
 }
 
-/* =====================================================
-   3. ORBIT – inverse-square gravity
-   ===================================================== */
+/* ---------- Skills: orbit ---------- */
 function makeOrbit(){
   var box = $('#skills'), cv = $('#orbitCanvas'), ctx = cv.getContext('2d');
   var W=0,H=0,dpr=1,cx=0,cy=0,GM=1,sunR=40,Rmax=200,planets=[];
@@ -539,19 +533,29 @@ function makeOrbit(){
   }
   function init(){
     var f = fit(cv, box); W=f.W; H=f.H; dpr=f.dpr;
-    cx = W >= 900 ? W*0.67 : W*0.5; cy = H*0.57;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.font = '600 13.5px ' + FONT;
+    var radii = CONFIG.skills.map(function(name){ return Math.max(19, ctx.measureText(name).width/2 + 9); });
+    var maxPlanet = Math.max.apply(null, radii);
     var m = Math.min(W, H*0.9);
     sunR = clamp(m*0.075, 26, 54);
-    Rmax = Math.min(Math.min(cx, W-cx), (H-cy)*1.0, cy*0.95) - 20;
+    if(W >= 900){
+      cx = W*0.67; cy = H*0.57;
+      Rmax = Math.min(Math.min(cx, W-cx), H-cy, cy*0.95) - maxPlanet;
+    } else {
+      /* narrow screens: keep the orbit below the heading and paragraph, and inside the screen */
+      var bt = box.getBoundingClientRect().top, copy = $('.orbit-copy', box), note = $('.ns', box);
+      var top = copy ? copy.getBoundingClientRect().bottom - bt + 16 : H*0.35;
+      var bottom = note ? Math.min(H - 16, note.getBoundingClientRect().top - bt - 8) : H - 16;
+      cx = W*0.5; cy = (top + bottom)/2;
+      Rmax = Math.min(W/2 - maxPlanet, (bottom - top)/2 - maxPlanet);
+    }
     Rmax = Math.max(Rmax, sunR*3.2);
     var Rmin = sunR*2.4;
     GM = Math.pow(2*Math.PI/9, 2) * Math.pow(Rmax*0.6, 3);
-    ctx.setTransform(dpr,0,0,dpr,0,0);
-    ctx.font = '600 13.5px ' + FONT;
     var n = CONFIG.skills.length;
     planets = CONFIG.skills.map(function(name,i){
-      var w = ctx.measureText(name).width;
-      var p = {name:name, r:Math.max(19, w/2+9), a:Rmin + (Rmax-Rmin)*(n>1 ? i/(n-1) : 0.5), col:PAL[i%PAL.length]};
+      var p = {name:name, r:radii[i], a:Rmin + (Rmax-Rmin)*(n>1 ? i/(n-1) : 0.5), col:PAL[i%PAL.length]};
       circ(p);
       return p;
     });
@@ -650,9 +654,7 @@ function makeOrbit(){
   return mod;
 }
 
-/* =====================================================
-   5. EDUCATION – one knob on an elastic line
-   ===================================================== */
+/* ---------- Education: knob on an elastic line ---------- */
 function makeTimeline(){
   var list = $('#eduList');
   var items = Array.prototype.slice.call(list.querySelectorAll('.edu-item'));
@@ -732,9 +734,7 @@ function makeTimeline(){
   return mod;
 }
 
-/* =====================================================
-   4. CONTACT – magnetic button on a damped spring
-   ===================================================== */
+/* ---------- Contact: magnetic button ---------- */
 function makeMagnet(){
   var wrap = $('#magWrap'), btn = $('#mag');
   var gp = {x:-9999,y:-9999};
@@ -770,9 +770,7 @@ function makeMagnet(){
   return mod;
 }
 
-/* =====================================================
-   MENU – circular reveal overlay (links + gravity)
-   ===================================================== */
+/* ---------- Menu ---------- */
 function initMenu(){
   var burger = $('#burger'), menu = $('#menu'), closeBtn = $('#closeBtn');
   var isOpen = false;
@@ -814,7 +812,7 @@ function initMenu(){
 }
 initMenu();
 
-/* ---------- handwritten notes: one per section ---------- */
+/* ---------- Handwritten notes ---------- */
 (function(){
   var sq = '<svg viewBox="0 0 120 10" aria-hidden="true"><path pathLength="1" d="M2 6 C 14 0, 22 11, 34 6 S 54 0, 66 6 S 86 11, 98 6 S 114 3, 118 5"/></svg>';
   function mk(cls, n){ return '<div class="note '+cls+'" style="--n:0" aria-hidden="true"><b>'+esc(n.big)+'</b>'+sq+'<span>'+esc(n.small)+'</span></div>'; }
@@ -840,7 +838,7 @@ initMenu();
   els.forEach(function(e){ io.observe(e); });
 })();
 
-/* ---------- arrow that points at the “I” ---------- */
+/* ---------- Arrow pointing at the “I” ---------- */
 function initPsst(){
   var hero = $('#hero'), btn = $('#reel'), el = $('#psst');
   if(!btn || !el){ if(el) el.style.display = 'none'; return; }
@@ -849,13 +847,13 @@ function initPsst(){
     var hr = hero.getBoundingClientRect(), br = btn.getBoundingClientRect();
     var fs = parseFloat(getComputedStyle(btn).fontSize) || 48;
     var wide = hr.width >= 900;
-    var tx = br.left - hr.left + fs*0.2 - (wide ? 22 : 10);      /* arrow tip: just left of the "I" */
+    var tx = br.left - hr.left + fs*0.2 - (wide ? 22 : 10);   /* arrow tip, just left of the "I" */
     var ty = br.top - hr.top + br.height*0.55;
     var dy = wide ? 46 : 58;
-    /* desktop: park the note out in the empty space on the left and let a longer arrow swoop across to the "I" */
+    /* desktop: note sits in the empty space on the left, with a longer arrow */
     var sx = wide ? clamp(tx - 300, 24, tx - 120) : Math.max(6, tx - 70);
     var dx = Math.max(40, tx - sx), sy = ty - dy;
-    /* arrow: a loose curve from the note to the "I", with an arrowhead angled to match the end of the curve */
+    /* curve from the note to the "I", arrowhead angled to match its end */
     var c2x = dx*0.35, c2y = dy + 10, vx = dx - c2x, vy = dy - c2y, L = Math.hypot(vx, vy) || 1, ux = vx/L, uy = vy/L;
     function wing(a){ var bx = -ux*15, by = -uy*15, c = Math.cos(a), s = Math.sin(a);
       return (dx + bx*c - by*s).toFixed(1) + ' ' + (dy + bx*s + by*c).toFixed(1); }
@@ -864,19 +862,16 @@ function initPsst(){
     svg.setAttribute('viewBox', '0 0 ' + Math.ceil(dx + 12) + ' ' + (dy + 22));
     svg.style.width = Math.ceil(dx + 12) + 'px'; svg.style.height = (dy + 22) + 'px';
     el.style.left = sx + 'px'; el.style.top = sy + 'px';
-    el.style.setProperty('--tx', '0px');
+    el.style.setProperty('--tx', wide ? '0px' : Math.max(0, 28 - sx) + 'px');   /* keep the note text on screen */
     el.classList.add('on');
   }
   place();
   var t; window.addEventListener('resize', function(){ clearTimeout(t); t = setTimeout(place, 150); });
   setTimeout(place, 400);
   btn.addEventListener('click', function(){ el.classList.add('gone'); });
-  return place;
 }
 
-/* =====================================================
-   main loop – one rAF, modules pause when off-screen
-   ===================================================== */
+/* ---------- Main loop: one rAF, modules pause when off-screen ---------- */
 var fontReady = Promise.race([
   (document.fonts && document.fonts.load ? Promise.all([
     document.fonts.load('800 40px "Archivo"'), document.fonts.load('600 14px "Archivo"'),
@@ -886,9 +881,8 @@ var fontReady = Promise.race([
   new Promise(function(r){ setTimeout(r, 1500); })
 ]);
 
-var placePsst;
 fontReady.then(function(){
-  placePsst = initPsst();
+  initPsst();
   var mods = [makeHero(), makePendulums(), makeOrbit(), makeMagnet(), makeTimeline()];
 
   var io = new IntersectionObserver(function(entries){
@@ -918,4 +912,3 @@ fontReady.then(function(){
 });
 
 })();
-
